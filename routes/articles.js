@@ -7,19 +7,23 @@ router.get("/new", (req, res) => {
   res.render("articles/new");
 });
 
-router.get("/:id", (req, res) => {});
+router.get("/:id", (req, res) => {
+  res.send("it worked");
+});
 router.post("/", async (req, res) => {
-  const article = new Article({
+  let article = new Article({
     title: req.body.title,
     description: req.body.description,
     markdown: req.body.markdown,
   });
   try {
     console.log(article);
-    await article.save();
+    article = await article.save();
     res.redirect(`/articles/${article.id}`);
   } catch (e) {
-    res.render("articles/new", { articles: article });
+    console.log("IT FAILED!!!! : ", e);
+    // res.send("it failed!");
+    res.render("articles/new", { article: article });
   }
 });
 
