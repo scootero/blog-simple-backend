@@ -3,12 +3,13 @@ const Article = require("./../models/article");
 const router = express();
 
 router.get("/new", (req, res) => {
-  console.log("new");
-  res.render("articles/new");
+  res.render("articles/new", { article: new Article() });
 });
 
-router.get("/:id", (req, res) => {
-  res.send("it worked");
+router.get("/:id", async (req, res) => {
+  const article = await Article.findById(req.params.id);
+  if (article == null) res.redirect("/");
+  res.render("articles/show", { article: article });
 });
 router.post("/", async (req, res) => {
   let article = new Article({
@@ -17,7 +18,7 @@ router.post("/", async (req, res) => {
     markdown: req.body.markdown,
   });
   try {
-    console.log(article);
+    // console.log(article);
     article = await article.save();
     res.redirect(`/articles/${article.id}`);
   } catch (e) {
